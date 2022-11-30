@@ -1,0 +1,7 @@
+coverage>=6.5.0, <6.6
+opentelemetry-api>=1.13, <1.14
+opentelemetry-exporter-otlp>=1.13,<1.14 
+opentelemetry-exporter-otlp-proto-grpc>=1.13,<1.14
+opentelemetry-sdk>=1.13,<1.14
+paramiko>=2.11,<2.12
+
