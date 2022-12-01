@@ -14,21 +14,22 @@ updated: 18 oct 2022
 """
 
 import paramiko
+import os 
 import json 
 
 def events_streamer(event_type): 
     client=paramiko.SSHClient()
     client.load_system_host_keys()
-    # Which policy we actually should choose? : Autoadd, RejectPolicy, WarningPolicy 
-    #client.set_missing_host_key_policy()
+    path=os.getcwd()
+    path=path.replace("tempo_poc","")
 
-    config= paramiko.SSHConfig.from_file(open('/home/rclement/.ssh/config'))
+    config= paramiko.SSHConfig.from_file(open(f'{path}.ssh/config'))
     host= config.lookup('gerrit-ssh.volvocars.biz')
 
     client.connect( 'gerrit-ssh.volvocars.biz',
                     username='csei-jenkins',
                     port=22,
-                    key_filename='/home/rclement/.ssh/csei-jenkins-private-key' 
+                    key_filename=f'{path}.ssh/csei-jenkins-private-key' 
                     )             
     stdin, stdout, stderr = client.exec_command(f"gerrit stream-events -s {event_type}")
     # stdin, stdout, stderr = client.exec_command("gerrit stream-events")
@@ -54,13 +55,17 @@ def events_streamer(event_type):
 def gerrit_query(change_id):
     client=paramiko.SSHClient()
     client.load_system_host_keys()
-    config= paramiko.SSHConfig.from_file(open('/home/rclement/.ssh/config'))
+    path=os.getcwd()
+    path=path.replace("tempo_poc","")
+
+
+    config= paramiko.SSHConfig.from_file(open(f'{path}.ssh/config'))
     host= config.lookup('gerrit-ssh.volvocars.biz')
 
     client.connect( 'gerrit-ssh.volvocars.biz',
                     username='csei-jenkins',
                     port=22,
-                    key_filename='/home/rclement/.ssh/csei-jenkins-private-key' 
+                    key_filename=f'{path}.ssh/csei-jenkins-private-key' 
                     )             
     stdin, stdout, stderr = client.exec_command(f'gerrit query --format=JSON --patch-sets change:{change_id}')
 
