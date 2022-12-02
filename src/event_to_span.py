@@ -138,19 +138,27 @@ def create_code_review_span(event): #
     trace_id=create_trace_id(event)
     parent=create_context(trace_id,parent_span_id(event)) #parent=patch set span 
     author=f"{event['author']['name']}  ({event['author']['username']})"
-    
+    keys=event.keys()
     
     tracer=set_tracer(f"pathset {event['patchSet']['number']}",event['change']['number'])       
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,"code-review"))
-     
-    with tracer.start_span(f"code review -{author} ",start_time=convert_to_ns(event['patchSet']['createdOn']),links=[trace.Link(parent)]) as cr:
-        cr.set_attribute("Project",event['change']['project'])
-        cr.set_attribute("Author",author)
-        cr.set_attribute("Verified",f"{event['approvals'][0]['value']}")
-        cr.set_attribute("Code Review",f"{event['approvals'][1]['value']}")
-        cr.set_attribute("Comment",f"{event['comment']}")
-        ctx=cr.get_span_context()
-        cr.end(end_time=convert_to_ns(event["eventCreatedOn"]))
+    
+    if "approvals" in keys: 
+        with tracer.start_span(f"code review -{author} ",start_time=convert_to_ns(event['patchSet']['createdOn']),links=[trace.Link(parent)]) as cr:
+            cr.set_attribute("Project",event['change']['project'])
+            cr.set_attribute("Author",author)
+            cr.set_attribute("Verified",f"{event['approvals'][0]['value']}")
+            cr.set_attribute("Code Review",f"{event['approvals'][1]['value']}")
+            cr.set_attribute("Comment",f"{event['comment']}")
+            ctx=cr.get_span_context()
+            cr.end(end_time=convert_to_ns(event["eventCreatedOn"]))
+    else:     
+        with tracer.start_span(f"code review -{author} ",start_time=convert_to_ns(event['patchSet']['createdOn']),links=[trace.Link(parent)]) as cr:
+            cr.set_attribute("Project",event['change']['project'])
+            cr.set_attribute("Author",author)
+            cr.set_attribute("Comment",f"{event['comment']}")
+            ctx=cr.get_span_context()
+            cr.end(end_time=convert_to_ns(event["eventCreatedOn"]))
 
     return ctx
 
