@@ -25,22 +25,17 @@ def events_streamer(event_type):
     client.load_system_host_keys()
     path=os.getcwd()
     path=path.replace("tempo_poc","")
-     
-    #config= paramiko.SSHConfig.from_file(open(f'{path}.ssh/config'))
-    #host= config.lookup('gerrit-ssh.volvocars.biz')
-
+    
     client.connect( 'gerrit-ssh.volvocars.biz',
                     username='csei-jenkins',
                     port=22,
                     key_filename=f'{path}.ssh/id_rsa' 
                     )             
-    stdin, stdout, stderr = client.exec_command(f"gerrit stream-events -s {event_type}")
-    # stdin, stdout, stderr = client.exec_command("gerrit stream-events")
-     
+    stdin, stdout, stderr = client.exec_command(f"gerrit stream-events -s {event_type}")  
     stdin.close() # This is to get rid of "AttributeError: 'NoneType' object has no attribute 'time'"
     
     events=[]
- 
+    print("GERRIT STREAM EVENTS")
     for line in stdout:
         print(f"Retrieving gerrit stream events (type: {event_type}) :\n")
         event=json.loads(line)
@@ -60,10 +55,6 @@ def gerrit_query(change_id):
     client.load_system_host_keys()
     path=os.getcwd()
     path=path.replace("tempo_poc","")
-
-
-    #config= paramiko.SSHConfig.from_file(open(f'{path}.ssh/config'))
-    #host= config.lookup('gerrit-ssh.volvocars.biz')
 
     client.connect( 'gerrit-ssh.volvocars.biz',
                     username='csei-jenkins',
