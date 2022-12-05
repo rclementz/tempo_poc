@@ -33,22 +33,20 @@ def events_streamer(event_type):
                     key_filename=f'{path}.ssh/id_rsa' 
                     )             
     stdin, stdout, stderr = client.exec_command(f"gerrit stream-events -s {event_type}")  
-    stdin.close() # This is to get rid of "AttributeError: 'NoneType' object has no attribute 'time'"
+    stdin.close() 
     
     events=[]
-    print("GERRIT STREAM EVENTS")
     for line in stdout:
         print(f"Retrieving gerrit stream events (type: {event_type}) :\n")
         event=json.loads(line)
         events.append(event)
-        print(event) # Delete this line on demo ??
         client.close()
-        print('**Completed**')
+        print('Retrieved and creating span(s)')
     
     if len(events) == 0:
-        print(f"** Nothing retrieved from {event_type} **")
+        print(f"** Nothing retrieved from {event_type}")
         
-    return events  # Stream events saved in a list  
+    return events  # Stream events saved in a list 
 
 
 def gerrit_query(change_id):
@@ -64,9 +62,8 @@ def gerrit_query(change_id):
                     key_filename=f'{path}.ssh/id_rsa' 
                     )             
     stdin, stdout, stderr = client.exec_command(f'gerrit query --format=JSON --patch-sets change:{change_id}')
+    stdin.close()  
 
-    stdin.close() # This is to get rid of "AttributeError: 'NoneType' object has no attribute 'time'"
-    
     patchsets=[]
     for line in stdout:
         patchset=json.loads(line)
