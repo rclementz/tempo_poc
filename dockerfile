@@ -4,4 +4,6 @@ COPY . .
 #Install pip 
 RUN apt-get update && apt-get install -y \
     python3-pip
-CMD pip3 install -r requirements.txt && python3 src/main.py 
+RUN pip3 install -r requirements.txt 
+CMD ["python3","src/main.py"]
+USER nonroot 
