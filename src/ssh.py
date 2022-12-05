@@ -1,16 +1,19 @@
 """
 ssh.py 
-This is SSH client to access gerrit to get stream-events. 
+This is SSH client to access gerrit to get stream-events 
+and gerrit query. 
 Event type is specified as a parameter and events will be saved 
 and returned as list. 
 
-updated: 29 nov 2022
-
-updated: 18 oct 2022 
-*Func name: events_getter -> events_streamer 
- Using list instead of queue to save events 
- because queue objects disappear from the queue once retrived.
- (can't return and use them in a different file) 
+***updated: 05 dec 2022
+    No need to provide config anymore since host is in known_hosts file. 
+**updated: 29 nov 2022
+    path to key file name will be found by using getcwd()
+*updated: 18 oct 2022 
+    Func name: events_getter -> events_streamer 
+    Using list instead of queue to save events 
+     because queue objects disappear from the queue once retrived.
+    (can't return and use them in a different file) 
 """
 
 import paramiko
