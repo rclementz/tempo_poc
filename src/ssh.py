@@ -18,10 +18,8 @@ import os
 import json 
 
 def events_streamer(event_type): 
-    client=paramiko.SSHClient()
-    #Test solution 
+    client=paramiko.SSHClient()    
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    #
     client.load_system_host_keys()
     path=os.getcwd()
     path=path.replace("tempo_poc","")
@@ -52,6 +50,7 @@ def events_streamer(event_type):
 
 def gerrit_query(change_id):
     client=paramiko.SSHClient()
+    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  
     client.load_system_host_keys()
     path=os.getcwd()
     path=path.replace("tempo_poc","")
