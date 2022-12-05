@@ -25,14 +25,14 @@ def events_streamer(event_type):
     client.load_system_host_keys()
     path=os.getcwd()
     path=path.replace("tempo_poc","")
-
-    config= paramiko.SSHConfig.from_file(open(f'{path}.ssh/config'))
-    host= config.lookup('gerrit-ssh.volvocars.biz')
+     
+    #config= paramiko.SSHConfig.from_file(open(f'{path}.ssh/config'))
+    #host= config.lookup('gerrit-ssh.volvocars.biz')
 
     client.connect( 'gerrit-ssh.volvocars.biz',
                     username='csei-jenkins',
                     port=22,
-                    key_filename=f'{path}.ssh/csei-jenkins-private-key' 
+                    key_filename=f'{path}.ssh/id_rsa' 
                     )             
     stdin, stdout, stderr = client.exec_command(f"gerrit stream-events -s {event_type}")
     # stdin, stdout, stderr = client.exec_command("gerrit stream-events")
@@ -62,13 +62,13 @@ def gerrit_query(change_id):
     path=path.replace("tempo_poc","")
 
 
-    config= paramiko.SSHConfig.from_file(open(f'{path}.ssh/config'))
-    host= config.lookup('gerrit-ssh.volvocars.biz')
+    #config= paramiko.SSHConfig.from_file(open(f'{path}.ssh/config'))
+    #host= config.lookup('gerrit-ssh.volvocars.biz')
 
     client.connect( 'gerrit-ssh.volvocars.biz',
                     username='csei-jenkins',
                     port=22,
-                    key_filename=f'{path}.ssh/csei-jenkins-private-key' 
+                    key_filename=f'{path}.ssh/id_rsa' 
                     )             
     stdin, stdout, stderr = client.exec_command(f'gerrit query --format=JSON --patch-sets change:{change_id}')
 
