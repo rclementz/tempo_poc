@@ -1,9 +1,8 @@
 """
 ssh.py 
-This is SSH client to access gerrit to get stream-events 
-and gerrit query. 
-Event type is specified as a parameter and events will be saved 
-and returned as list. 
+This module handles SSH client to access gerrit to get stream-events 
+and gerrit query. Event type is specified as a parameter and events 
+will be saved and returned as list. 
 
 ***updated: 05 dec 2022
     No need to provide config anymore since host is in known_hosts file. 
@@ -21,6 +20,15 @@ import os
 import json 
 
 def events_streamer(event_type): 
+    """
+    events_streamer connects gerrit via SSH
+    and stream ongoing code review events. 
+    :pram event_type: string, event type on gerrit 
+    :return a list of each event retrieved 
+
+    Event types used in this poc are "patchset-created",
+    "comment-added","change-merged","change-abandoned"
+    """
     client=paramiko.SSHClient()    
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.load_system_host_keys()
@@ -50,6 +58,13 @@ def events_streamer(event_type):
 
 
 def gerrit_query(change_id):
+    """
+    gerrit_query makes a query on gerrit 
+    and retrieve the patch set infomation 
+    in the particular change.
+    :param change_id: string, change id in gerrit  
+    :return a list of patchsets in the change
+    """
     client=paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  
     client.load_system_host_keys()
