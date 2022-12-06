@@ -2,7 +2,6 @@ FROM ghcr.io/volvo-cars/rdswf-python-3.8:0.1.0
 
 WORKDIR tempo_poc/
 
-# TODO: pip3 should be in rwswf-python-3.8
 RUN apt-get update && apt-get install -y --no-install-recommends python3-pip
 
 COPY requirements.txt . 
