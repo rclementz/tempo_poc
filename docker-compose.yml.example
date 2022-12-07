@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  dev:
+    image: tempo_poc
+    build: .
+    init: true
+    restart: unless-stopped
+    environment:
+      TEMPO_TOKEN: # TODO: insert your tempo token
+      SSH_KEY_TYPE: rsa
+      SSH_KEY: |
+        -----BEGIN RSA PRIVATE KEY-----
+        ... TODO: insert your RSA key
+        -----END RSA PRIVATE KEY-----
