@@ -15,14 +15,14 @@ Even if spans are created separately, all spans for the same commit will be comb
 
 ### HOW TO RUN 
 ```shell
-$./run_poc.sh 
+ $ docker-compose up --build -d 
 ```
-`run_poc.sh` builds docker image, sets up enviromental valiables and runs the container. 
-
-If you've built the docker image already and want to run again, run
+After running this command, please wait for a while since it takes a while to retrieve data and create spans if some activities are found in stream events. 
+Then you can run below and see logs 
 ```shell
-$ ./re_run.sh
+$ docker-compose logs 
 ```
+![]
 
 
 ### Further improvement
