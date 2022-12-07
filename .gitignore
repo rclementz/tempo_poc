@@ -1,1 +1,5 @@
+<<<<<<< HEAD
+=======
+# docker-compose.yml contains secrets so don't add it to git
+>>>>>>> 118066ece9bd6bc8f6a09f88b236991514d8bf01
 docker-compose.yml
