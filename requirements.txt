@@ -4,4 +4,4 @@ opentelemetry-exporter-otlp>=1.14,<1.15
 opentelemetry-exporter-otlp-proto-grpc>=1.14,<1.15
 opentelemetry-sdk>=1.14,<1.15
 paramiko>=2.12,<2.13
-
+protobuf>=3.19,<3.20

@@ -1,9 +1,22 @@
-
+"""
+tracer.py 
+This modules has a function to set tracer 
+to create spans and trace with opentelemetry. 
+Grafana tempo is configured as endpoint and 
+all created spans are sent there. 
+"""
 from custom_id import CustomIdGenerator
 custom_id_generator=CustomIdGenerator()
 
-
 def set_tracer(service_name,tracer_name):
+    """
+    Sets up a tracer to create spans/trace.
+    Each service should have an individual tracer
+    so this will be set everytime span is created.
+
+    :pram service_name: string, Usually project name 
+    :param tracer_name: string, a name to make each tracer unique 
+    """
     from base64 import b64encode
 
     import os
@@ -20,7 +33,6 @@ def set_tracer(service_name,tracer_name):
     })
 
     another_provider=TracerProvider(resource=resource,id_generator=custom_id_generator)
-    #custom_id_generator needs to be sent to traceProvider but not anywhere else 
     # get token from env
     token = os.getenv('TEMPO_TOKEN') or sys.exit("Please set the TEMPO_TOKEN environment variable")
     # base64 encode username : token bytes
@@ -39,7 +51,7 @@ def set_tracer(service_name,tracer_name):
     # Trace set up 
     another_provider.add_span_processor(span_processor)
     another_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
-    tracer_name = trace.get_tracer(__name__,tracer_provider=another_provider) #just name, not custom_id_generator 
+    tracer_name = trace.get_tracer(__name__,tracer_provider=another_provider) 
 
     return tracer_name
 

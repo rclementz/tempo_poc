@@ -1,3 +1,10 @@
+"""
+sample.py
+This modules contains sample gerrit event data
+to be used in unit tests. 
+"""
+
+
 change_mergeds=[{
     "submitter": {
         "name": "Royaee, Shaghayegh",

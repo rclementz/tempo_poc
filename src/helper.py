@@ -1,19 +1,15 @@
+"""
+helper.py
+This module contains help functions to create a span
+with other functions in event_to_span.py 
+"""
 
-
-# def get_change_name(event):
-#   """
-#   Get name of the change retrived 
-#   through gerrit stream events. 
-#   """
-#   event_type=event['type']
-#   # get patch number 
-#   patch_number=event['patchSet']['number']
-#   name=event_type.replace('-', f" {patch_number} ")
-#   return name 
 
 def convert_to_ns(seconds):
  """
   Convert gerrit's timestamp to nano seconds
+  :param seconds: int, timestamp from gerrit with seconds 
+  :return int, timestamp with nano secounds 
  """
  ns= int("%s000000000" % seconds)
  return ns 
@@ -21,15 +17,13 @@ def convert_to_ns(seconds):
 
 def create_trace_id(event):
   """
-   Hash change id to use as own trace id on id generator.  
-   @param event: dict from stream events
-   return int 
+  Hash change id to use as own trace id on id generator.  
+  :param event: dict from stream events
+  :return int 
   """
   import hashlib
   m=hashlib.md5() 
   bstring=event['change']['id'].encode('ASCII')
-  # bstring=event['change']['id'].encode()
-  # m.update(b"{event['change']['id']}")
   m.update(bstring)
   trace_id=int(m.hexdigest(),16)
   
@@ -38,14 +32,12 @@ def create_trace_id(event):
 
 def md5_span_id(seed):
  """
-   Hash string to use as own span id on id generator. 
-   @praram seed 
-   return int 
+ Hash string to use as own span id on id generator. 
+ :praram seed: string, usually gerrit ref+ event type + additional info
+ :return int 
  """
  import hashlib 
- m=hashlib.md5()# No need to use this 
-#  m.update(string.encode())
-#  m.update(b'{string}')
+ m=hashlib.md5()
  bstring=seed.encode('ASCII')
  m.update(bstring)
  span_id=(int(m.hexdigest(),16)) % 2**64
@@ -57,6 +49,9 @@ def create_span_id(event,event_type):
   """
   Create a string to hash for an unique span id.
   Each event type has different element to take. 
+  :pram event:dict
+  :param event_type:string
+  :reutrn span_id: int 
   """
   ref=event['patchSet']['ref']
   patch_nr=event['patchSet']['number']
@@ -84,12 +79,12 @@ def create_span_id(event,event_type):
   
 def parent_span_id(event):
   """
-   Regenerate span id for a parent span.
-   Depends on event type, the parent will be different.
-   Patchset spans : 
-    parent = current change 
-   Code review/merged/abandoned spans :
-    parent = current patchset 
+  Regenerate span id for a parent span.
+  Depends on event type, the parent will be different.
+  Patchset spans: parent = current change 
+  Code review/merged/abandoned spans: parent = current patchset 
+  :param event: dict
+  :return parent_span_id: int
   """
   event_type=event['type']
   ref=event['patchSet']['ref']
@@ -107,9 +102,11 @@ def parent_span_id(event):
 
 def set_generate_ids(generator,t_id,s_id): #pragma:no cover 
   """
-  @param generator custom_id_generator
-  @param t_id int,hashed change id 
-  @param s_id int, hased for span id  
+  Set trace id and span id to create a span with 
+  using these ids.
+  :param generator custom_id_generator
+  :param t_id:int, hashed change id 
+  :param s_id:int, hased for span id  
   """
   from tracer import custom_id_generator 
   t_type=type(t_id)  
@@ -127,8 +124,9 @@ def create_context(traceid,spanid):
   """
    Convert trace/span id with tempo format
    to Opentelemetry SpanContext format.
-   @param traceid int
-   @param spanid  int
+   :param traceid:int
+   :param spanid:int
+   :return ctx:SpanContext(), span context just created
   """ 
   from opentelemetry.trace import SpanContext,TraceFlags
 
@@ -139,27 +137,4 @@ def create_context(traceid,spanid):
 
   return ctx 
 
-
-# These functions below will not be used for the real case 
-# def trace_id(name):
-#   """
-#   Temporary trace id maker while creating span manually 
-#   """
-#   import hashlib
-#   m=hashlib.md5()
-#   m.update(name.encode())
-#   trace_id=int(m.hexdigest(),16)
-  
-#   return trace_id
-
-# def span_id(name):
-#   """
-#   Temporary span id maker while creating span manually 
-#   """
-#   import hashlib 
-#   m=hashlib.md5()
-#   m.update(name.encode())
-#   span_id=(int(m.hexdigest(),16)) % 2**64
-
-#   return span_id
 

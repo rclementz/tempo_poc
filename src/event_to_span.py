@@ -1,27 +1,22 @@
+"""
+event_to_span.py 
+This module contains functions to create different type of spans
+with getting necessary infomation like timestamps, name and attributes
+from an event dictionary. 
+"""
+
+
 from helper import set_generate_ids,create_trace_id,convert_to_ns,create_span_id,create_context,parent_span_id,md5_span_id
-from ssh import events_streamer
 from tracer import set_tracer, custom_id_generator,set_tracer
 from opentelemetry import trace 
-"""
-Event type:
-patchset-created
-change-merged
-reviewer-added
-comment-added
-
-ref-updated 
-project-created
-change-abandoned
-
-
-"""
 
 def get_patchset_st(change_id,patch_nr):
     """
     Retrieves timestamp when a particular patch set 
     was created in a change via gerrit query. 
-    @param change_id string
-    @param patch_nr int
+    :param change_id: string
+    :param patch_nr: int
+    :return int, start time of patch set 
     """
     from ssh import gerrit_query
     patchsets=gerrit_query(change_id)
@@ -29,6 +24,12 @@ def get_patchset_st(change_id,patch_nr):
     return convert_to_ns(start_time)
 
 def create_change_span(event):
+    """
+    Create a change span which shows the whole process 
+    since a commit made until the change merged. 
+    :praram event:dict 
+    :return SpanContext(), context of this span 
+    """
     project=f"{event['change']['number']}({event['change']['project']})"
     tracer=set_tracer(project,event['change']['number'])
     set_generate_ids(custom_id_generator,create_trace_id(event),create_span_id(event,"change-created"))
@@ -47,6 +48,8 @@ def complete_change_span(event):
     """
     Complete the change span by sending 
     the actual end time for the span. 
+    :param event:dict
+    :return SpanContext(), context of this span 
     """
     time=convert_to_ns(event["eventCreatedOn"])
     trace_id=create_trace_id(event)
@@ -67,6 +70,8 @@ def complete_change_span(event):
 def create_patch_span(event):
     """
     Create a short span when patch set was created. 
+    :param event:dict
+    :return SpanContext(), context of this span 
     """
     time=convert_to_ns(event["eventCreatedOn"])
     trace_id=create_trace_id(event)
@@ -83,10 +88,12 @@ def create_patch_span(event):
     
     return ctx
 
-def complete_patch_span(event): #
+def complete_patch_span(event): 
     """
     Create complete a current patchset span 
     when the next patch set was created. 
+    :param event:dict
+    :return SpanContext(), context of this span 
     """
     patch_nr=event['patchSet']['number']
     st=get_patchset_st(event['change']['id'],patch_nr) 
@@ -128,12 +135,14 @@ def complete_patch_span(event): #
     return ctx    
 
 
-def create_code_review_span(event): #
+def create_code_review_span(event): 
     """
     Create a span to see whole code review process
     for a reviewer.
     Start time= when patchset created 
-    End time= when the comment added 
+    End time= when the comment added
+    :param event:dict
+    :return SpanContext(), context of this span  
     """
     trace_id=create_trace_id(event)
     parent=create_context(trace_id,parent_span_id(event)) #parent=patch set span 
@@ -162,7 +171,13 @@ def create_code_review_span(event): #
 
     return ctx
 
-def create_comment_span(event,ctx):# 
+def create_comment_span(event,ctx):
+    """
+    Create a short span when a comment added
+    :param event:dict
+    :param ctx:SpanContext(), context of the parent span 
+    :return SpanContext(), context of this span 
+    """ 
 
     time=convert_to_ns(event["eventCreatedOn"])
     trace_id=create_trace_id(event)
@@ -186,7 +201,8 @@ def create_merged_or_abandoned_span(event):#
     """
     Create a change merged or abandoned span. 
     Check event type and automatically decide which span to create. 
-
+    :param event:dict
+    :return SpanContext(), context of this span 
     """
     time=convert_to_ns(event["eventCreatedOn"])
     trace_id=create_trace_id(event)
@@ -205,6 +221,13 @@ def create_merged_or_abandoned_span(event):#
     return ctx
 
 def complete_trace(event):
+    """
+    Sets up proper ends time for the latest patchset span
+    and the change span so the trace can be completed.
+    The definition of end is when the change is 
+    either merged or abandoned.
+    :param event:dict
+    """
     merge_abandoned=create_merged_or_abandoned_span(event)
     patchset=complete_patch_span(event)
     change=complete_change_span(event)
@@ -212,27 +235,6 @@ def complete_trace(event):
        
 
 
-
-# #One reviewer is added in each event eventhough it happens at the same time 
-# #Probabaly it doesn't have to be created as a span?? 
-# def create_reviewer_added_span(event):
-#     """
-#     Create a reviewer added span.
-#     """
-#     time=convert_to_ns(event["eventCreatedOn"])
-#     trace_id=create_trace_id(event)
-#     parent_ctx=create_context(trace_id,parent_span_id(event))
-
-#     tracer=set_tracer(f"{event['project']}",f"tr{event['change']['number']}")      
-#     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,event['type']))
-
-#     with tracer.start_span("Reviewer added",start_time=time,links=[trace.Link(parent_ctx)]) as ra: 
-#         ra.set_attribute("adder",f"{event['adder']['name']}  ({event['adder']['username']})")
-#         ra.set_attribute("reviewer",f"{event['reviewer']['name']}  ({event['reviewer']['username']})")
-#         ctx=ra.get_span_context()
-#         ra.end(end_time=time)
-#         print(f"a span from {event['project']} created")
-#     return ctx    
 
 
 
