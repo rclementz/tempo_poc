@@ -1,3 +1,10 @@
+"""
+trace_id_search.py
+This provides the trace id search function.
+User can input gerrit change id and it is 
+converted to trace id for Grafana Tempo. 
+"""
+
 import hashlib
 
 print("****TRACE ID SEARCHER****\nPlease input change id:")
