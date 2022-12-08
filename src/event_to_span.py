@@ -122,10 +122,15 @@ def complete_patch_span(event):
         name=event['uploader']['name']
         username=event['uploader']['username']
 
-    elif event_type=="change-merged" or event_type=="change-abandoned":
+    elif event_type=="change-merged":
         person="Submitter"
         name=event['submitter']['name']
         username=event['submitter']['username']
+
+    elif event_type=="change-abandoned":
+        person="Abandoner"
+        name=event['abandoner']['name']
+        username=event['abandoner']['username']
 
     tracer=set_tracer(f"pathset {patch_nr_to_complete}",event['change']['number'])    
     set_generate_ids(custom_id_generator,trace_id,span_id)
@@ -216,11 +221,21 @@ def create_merged_or_abandoned_span(event):#
     span_name=event_type.replace("c","C")
     span_name= span_name.replace("-", " ")
 
+    if event_type=="change-merged":
+        person="Submitter"
+        name=event['submitter']['name']
+        username=event['submitter']['username']
+
+    elif event_type=="change-abandoned":
+        person="Abandoner"
+        name=event['abandoner']['name']
+        username=event['abandoner']['username']
+
     tracer=set_tracer(f"pathset {event['patchSet']['number']}",event['change']['number'])       
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,event_type))
     #Short span for change merged 
     with tracer.start_span(span_name,start_time=time,links=[trace.Link(parent)]) as cm: 
-        cm.set_attribute("abandoner",f"{event['abandoner']['name']}  ({event['abandoner']['username']})")
+        cm.set_attribute(person,f"{name} ({username})")
         ctx=cm.get_span_context()
         cm.end(end_time=time)                            
     return ctx
