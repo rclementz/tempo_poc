@@ -220,7 +220,7 @@ def create_merged_or_abandoned_span(event):#
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,event_type))
     #Short span for change merged 
     with tracer.start_span(span_name,start_time=time,links=[trace.Link(parent)]) as cm: 
-        cm.set_attribute("submitter",f"{event['submitter']['name']}  ({event['submitter']['username']})")
+        cm.set_attribute("abandoner",f"{event['abandoner']['name']}  ({event['abandoner']['username']})")
         ctx=cm.get_span_context()
         cm.end(end_time=time)                            
     return ctx
