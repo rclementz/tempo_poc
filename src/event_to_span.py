@@ -20,7 +20,7 @@ def get_patchset_st(change_id,patch_nr):
     """
     from ssh import gerrit_query
     patchsets=gerrit_query(change_id)
-    start_time=patchsets[(patch_nr-1)]['createdOn']
+    start_time=patchsets[(patch_nr-2)]['createdOn']
     return convert_to_ns(start_time)
 
 def create_change_span(event):
@@ -99,7 +99,7 @@ def complete_patch_span(event):
     """
     patch_nr=event['patchSet']['number']
     st=get_patchset_st(event['change']['id'],patch_nr) 
-    print(f"**debug** st={st}")
+    print(f"**debug** patch={patch_nr} st={st}")
     et=convert_to_ns(event["eventCreatedOn"])
     ref=event['patchSet']['ref']
     event_type=event['type']
