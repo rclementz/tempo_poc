@@ -113,6 +113,10 @@ Enjoy tracing!
 
 
     
-## Further improvement
-
+## Further improvements
+These are issues/idea to develop this poc further.
+- **Adapting irregular flow**:
+Since gerrit stream events is not covering patchset deleted, we can't follow that activity even when it happens. Deleted patchset stays on the trace. 
+- **Organising dashboard**
+This poc is covering all gerrit activities under CSEI and create spans and traces of everything happening. That makes a bit difficult for you to find a particular trace without using tempo query. It'd be great if we can set up dashboards for different categories(ex:each change or each team etc)to access and see traces much more easily.   
 
