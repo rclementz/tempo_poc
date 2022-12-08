@@ -88,6 +88,8 @@ def gerrit_query(change_id):
     client.close()
     print('Completed and the connection closed.')
     
+    patchsets=patchsets[0].get('patchSets')
+     
     return patchsets
 
 
