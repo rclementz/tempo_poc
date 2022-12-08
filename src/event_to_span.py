@@ -81,8 +81,10 @@ def create_patch_span(event):
     
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,event['type']))
     with tracer.start_span(f"pathset {event['patchSet']['number']} created",start_time=time,links=[trace.Link(parent)]) as ps:
-        ps.set_attribute("Project",f"{event['patchSet']['kind']}") 
+        ps.set_attribute("Project",f"{event['change']['project']}") 
+        ps.set_attribute("Subject",f"{event['change']['subject']}") 
         ps.set_attribute("Uploader",f"{event['uploader']['name']} ({event['uploader']['username']})")
+        ps.set_attribute("URL",f"{event['change']['url']}")
         ctx=ps.get_span_context()
         ps.end(end_time=time)
     
@@ -97,6 +99,7 @@ def complete_patch_span(event):
     """
     patch_nr=event['patchSet']['number']
     st=get_patchset_st(event['change']['id'],patch_nr) 
+    print(f"**debug** st={st}")
     et=convert_to_ns(event["eventCreatedOn"])
     ref=event['patchSet']['ref']
     event_type=event['type']
@@ -127,7 +130,9 @@ def complete_patch_span(event):
     tracer=set_tracer(f"pathset {patch_nr_to_complete}",event['change']['number'])    
     set_generate_ids(custom_id_generator,trace_id,span_id)
     with tracer.start_span(f"pathset {patch_nr_to_complete}",start_time=st,links=[trace.Link(parent)]) as ps:
-        ps.set_attribute("Project",f"{event['patchSet']['kind']}") 
+        ps.set_attribute("Project",f"{event['change']['project']}") 
+        ps.set_attribute("Subject",f"{event['change']['subject']}") 
+        ps.set_attribute("URL",f"{event['change']['url']}") 
         ps.set_attribute(person,f"{name} ({username})")
         ctx=ps.get_span_context()
         ps.end(end_time=et)
@@ -233,7 +238,6 @@ def complete_trace(event):
     change=complete_change_span(event)
     return f"Contexts:\nmerged/abandoned:{merge_abandoned}\npatchset:{patchset}\nchange:{change}"
        
-
 
 
 
