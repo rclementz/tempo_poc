@@ -4,6 +4,9 @@ This module handles SSH client to access gerrit to get stream-events
 and gerrit query. Event type is specified as a parameter and events 
 will be saved and returned as list. 
 
+****updated: 08 dec 2022
+    gerrit_query now returns list which contains only patchset data. 
+    (Some other keys and values cause error because of unacceptable format as dict) 
 ***updated: 05 dec 2022
     No need to provide config anymore since host is in known_hosts file. 
 **updated: 29 nov 2022
@@ -88,6 +91,8 @@ def gerrit_query(change_id):
     client.close()
     print('Completed and the connection closed.')
     
+    patchsets=patchsets[0].get('patchSets') 
+     
     return patchsets
 
 
