@@ -22,7 +22,7 @@ For example, a patchset 1 span starts when it is created and ends when the next 
 
 >**Trace**: the collection of spans which belong to the same code review process (the same change) 
 
-##HOW IT WORKS 
+## HOW IT WORKS 
 ![Process](https://user-images.githubusercontent.com/114480431/206667118-dff32b23-c281-4c2f-9404-64d710df7dd7.png)
 
 ## HOW TO RUN 
