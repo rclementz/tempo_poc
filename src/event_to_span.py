@@ -80,7 +80,7 @@ def create_patch_span(event):
     tracer=set_tracer(f"pathset {event['patchSet']['number']}",event['change']['number'])    
     
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,event['type']))
-    with tracer.start_span(f"pathset {event['patchSet']['number']} created",start_time=time,links=[trace.Link(parent)]) as ps:
+    with tracer.start_span(f"pathset {event['patchSet']['number']}",start_time=time,links=[trace.Link(parent)]) as ps:
         ps.set_attribute("Project",f"{event['change']['project']}") 
         ps.set_attribute("Subject",f"{event['change']['subject']}") 
         ps.set_attribute("Uploader",f"{event['uploader']['name']} ({event['uploader']['username']})")
