@@ -99,7 +99,6 @@ def complete_patch_span(event):
     """
     patch_nr=event['patchSet']['number']
     st=get_patchset_st(event['change']['id'],patch_nr) 
-    print(f"**debug** patch={patch_nr} st={st}")
     et=convert_to_ns(event["eventCreatedOn"])
     ref=event['patchSet']['ref']
     event_type=event['type']
