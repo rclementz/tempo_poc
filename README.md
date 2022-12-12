@@ -22,8 +22,24 @@ For example, a patchset 1 span starts when it is created and ends when the next 
 
 >**Trace**: the collection of spans which belong to the same code review process (the same change) 
 
+### Span type
+There are 6 different type of spans to follw code review processes:  
+ - **change** : duration of whole code review process in the change
+ - **patchset** : duration of a patchset 
+ - **change merged** : time point when change is merged 
+ - **change abandoned**: time point when change is abandoned
+ - **comment added**: time point a comment, code review or verification is added 
+ - **code review**: duration of code review process in a patchset 
+ 
+### trace id and span id 
+All spans has both unique trace id and span id. 
+As default, ids are generated randomly but this poc has custom id generater (in `custom_id.py`) and own ids depends on type of spans.  
+
+ -**trace id**: generated based on gerrit change id (change id can be found in any stream events data) 
+ -**span id** : reference + event type + some extra information 
 ## HOW IT WORKS 
-![Process](https://user-images.githubusercontent.com/114480431/206667118-dff32b23-c281-4c2f-9404-64d710df7dd7.png)
+This is the flow from getting data from gerrit stream events to complete visualisation of spans as a trace. 
+![process_v2](https://user-images.githubusercontent.com/114480431/206720422-8ad9bc40-1e73-4f90-9538-f22cf46c9cf4.png)
 
 ## HOW TO RUN 
 ```shell
