@@ -3,6 +3,10 @@ event_to_span.py
 This module contains functions to create different type of spans
 with getting necessary infomation like timestamps, name and attributes
 from an event dictionary. 
+
+*updated 12 dec 2022:
+ temporary patchset spans's end time now sets as current time 
+ instead of using its start time. 
 """
 
 
@@ -86,7 +90,7 @@ def create_patch_span(event):
         ps.set_attribute("Uploader",f"{event['uploader']['name']} ({event['uploader']['username']})")
         ps.set_attribute("URL",f"{event['change']['url']}")
         ctx=ps.get_span_context()
-        ps.end(end_time=time)
+       
     
     return ctx
 
