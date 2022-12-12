@@ -123,7 +123,7 @@ Under this line, there's also the detail of created span with JSON format:
        }
 }             
 ```
->***attributes**: usually contains reference of the change(**ref**) and the name of person who commited (this can be **owner**,**uploader**,**submitter** or >**author**)and other elements differ depends on the type of spans(**change**,**patchset**,**comment**,**code review**)
+>***attributes**: usually contains reference of the change(**ref**) and the name of person who commited (this can be **owner**,**uploader**,**submitter** or **author**)and other elements differ depends on the type of spans(**change**,**patchset**,**comment**,**code review**)
        
 >***links**: if the span is related to another span as parent and child spans, parent span's context(trace id and span id) will be shown here. 
 
