@@ -1,2 +1,3 @@
 # docker-compose.yml contains secrets so don't add it to git
 docker-compose.yml
+workflow.yml
