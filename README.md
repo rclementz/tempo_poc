@@ -32,11 +32,29 @@ There are 6 different type of spans to follw code review processes:
  - **code review**: duration of code review process in a patchset 
  
 ### trace id and span id 
-All spans has both unique trace id and span id. 
+All spans has unique trace and span id. 
 As default, ids are generated randomly but this poc has custom id generater (in `custom_id.py`) and own ids depends on type of spans.  
 
- -**trace id**: generated based on gerrit change id (change id can be found in any stream events data) 
- -**span id** : reference + event type + some extra information 
+ - **trace id**: generated based on gerrit change id (change id can be found in any stream events data so it can be shared within every linked spans) 
+ - **span id** : differ depends on type of spans
+ 
+     - change : `refs/change/xx/<change number>/<patchset number>`
+        
+     - patchset : `refs/change/xx/<change number>/<patchset number>/patchset-created`
+        
+     - change merged : `refs/change/xx/<change number>/<patchset number>/change merged`
+        
+     - change abandoned : `refs/change/xx/<change number>/<patchset number>/change-abandoned`
+        
+     - comment added : `refs/change/xx/<change number>/<patchset number>/comment-added/<adder name>/<timestamp>`
+        
+     - code review : `refs/change/xx/<change number>/<patchset number>/<adder name>`
+    
+    *xx = the last two digits of change number 
+
+Both trace and span ids are hashed with md5 and convert to int before sending to custom id generator. 
+Opentelemetry converts given ints to hexadicimal int (*check json data at [spans are created](#spans-are-created) for examples)  
+    
 ## HOW IT WORKS 
 This is the flow from getting data from gerrit stream events to complete visualisation of spans as a trace. 
 ![process_v2](https://user-images.githubusercontent.com/114480431/206720422-8ad9bc40-1e73-4f90-9538-f22cf46c9cf4.png)
@@ -50,6 +68,9 @@ Then you can run below and see logs
 ```shell
 $ docker-compose logs 
 ```
+⚠️ Since `docker-compose.yml` contains credentials, it is not shown in this repo.
+If you'd like to run tempo poc locally please use `docker-compose.yml.exmaple` as template and create your own. You need to have an API key for Grafana Tempo(`TEMPO_TOKEN`) and SSH key (`id_rsa`).  
+
 ## HOW TO SEE LOGS 
 ### Spans are created
 If spans are created, these lines will be shown in logs. 
@@ -102,7 +123,7 @@ Under this line, there's also the detail of created span with JSON format:
        }
 }             
 ```
->***attributes**: usually contains reference of the change(**ref**) and the name of person who commited (this can be **owner**,**uploader**,**submitter** or >**author**)and other elements differ depends on the type of spans(**change**,**patchset**,**comment**,**code review**)
+>***attributes**: usually contains reference of the change(**ref**) and the name of person who commited (this can be **owner**,**uploader**,**submitter** or **author**)and other elements differ depends on the type of spans(**change**,**patchset**,**comment**,**code review**)
        
 >***links**: if the span is related to another span as parent and child spans, parent span's context(trace id and span id) will be shown here. 
 
@@ -130,7 +151,6 @@ Once you get the trace id, only thing to do is making a query.
 Enjoy tracing! 
 
 
-    
 ## Further improvements
 These are issues/idea to develop this poc further.
 - **Adapting irregular flow**:
