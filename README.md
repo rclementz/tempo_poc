@@ -3,7 +3,7 @@
 ## OVERVIEW 
 Tempo poc is poc for code review process visualisation with [Grafana Tempo](https://grafana.com/docs/tempo/latest/).
 
-This programme traces code review processes on gerrit and creates **spans** by using [opentelemetry](https://opentelemetry.io/docs/instrumentation/python/). 
+This programme traces code review processes on gerrit and creates **spans** by using [opentelemetry](https://opentelemetry.io/docs/instrumentation/python/).
 
 All spans are created based on the data which is retrieved from [gerrit stream events*](https://gerrit.volvocars.biz/Documentation/cmd-stream-events.html), then sent to Grafana Tempo and visualised as traces. 
 Even if spans are created separately, all spans for the same commit will be combined in the same trace. You can always make a query and look up a particular trace on Grafana Tempo with trace id (Ex: `c7a3d286766cd5e8e02ca13dedf754a0`)
@@ -11,6 +11,9 @@ Even if spans are created separately, all spans for the same commit will be comb
 >**gerrit stream-events**: 
 >
 >provides JSON data of events/activity currently occuring on the gerrit server via SSH connection. Events can be categorised into 17 different types but this poc >filters and use only the ones from [patchset created](https://gerrit.volvocars.biz/Documentation/cmd-stream-events.html#_patchset_created), [comment added](https://gerrit.volvocars.biz/Documentation/cmd-stream-events.html#_comment_added), [change merged](https://gerrit.volvocars.biz/Documentation/cmd-stream-events.html#_change_merged) and [change abandoned](https://gerrit.volvocars.biz/Documentation/cmd-stream-events.html#_change_abandoned). You can always find sample >json data in `/src/sample.py`. 
+
+
+The visualisation of the code review process makes easier to understand the duration of your work and find a bottle neck when the process goes(or went) too slow.  
 
 ## SPAN AND TRACE 
 ![span_trace_explanation](https://user-images.githubusercontent.com/114480431/206401083-ceab2702-4bdb-4015-933d-512b0954be25.png)
