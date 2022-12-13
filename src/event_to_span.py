@@ -42,6 +42,7 @@ def create_change_span(event):
         change.set_attribute("Owner",f"{event['change']['owner']['name']} ({event['change']['owner']['username']})")
         change.set_attribute("Subject",event['change']['subject'])
         change.set_attribute("URL",event['change']['url'])
+        change.end()
         ctx=change.get_span_context()
      
 
@@ -89,6 +90,7 @@ def create_patch_span(event):
         ps.set_attribute("Subject",f"{event['change']['subject']}") 
         ps.set_attribute("Uploader",f"{event['uploader']['name']} ({event['uploader']['username']})")
         ps.set_attribute("URL",f"{event['change']['url']}")
+        ps.end()
         ctx=ps.get_span_context()
        
     
