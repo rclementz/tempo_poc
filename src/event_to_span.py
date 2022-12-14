@@ -82,7 +82,7 @@ def create_patch_span(event):
     trace_id=create_trace_id(event)
     parent=create_context(trace_id,create_span_id(event,"change-created"))
 
-    tracer=set_tracer(f"pathset {event['patchSet']['number']}",event['change']['number'])    
+    tracer=set_tracer(f"patchset {event['patchSet']['number']}",event['change']['number'])    
     
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,event['type']))
     with tracer.start_span(f"pathset {event['patchSet']['number']}",start_time=time,links=[trace.Link(parent)]) as ps:
@@ -137,7 +137,7 @@ def complete_patch_span(event):
         name=event['abandoner']['name']
         username=event['abandoner']['username']
 
-    tracer=set_tracer(f"pathset {patch_nr_to_complete}",event['change']['number'])    
+    tracer=set_tracer(f"patchset {patch_nr_to_complete}",event['change']['number'])    
     set_generate_ids(custom_id_generator,trace_id,span_id)
     with tracer.start_span(f"pathset {patch_nr_to_complete}",start_time=st,links=[trace.Link(parent)]) as ps:
         ps.set_attribute("Project",f"{event['change']['project']}") 
