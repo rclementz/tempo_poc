@@ -164,7 +164,7 @@ def create_code_review_span(event):
     author=f"{event['author']['name']}  ({event['author']['username']})"
     keys=event.keys()
     
-    tracer=set_tracer(f"pathset {event['patchSet']['number']}",event['change']['number'])       
+    tracer=set_tracer(f"patchset {event['patchSet']['number']}",event['change']['number'])       
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,"code-review"))
     
     if "approvals" in keys: 
@@ -199,9 +199,10 @@ def create_comment_span(event,ctx):
     author=f"{event['author']['name']}  ({event['author']['username']})"
     comment=event['comment']
 
-    tracer=set_tracer(f"pathset {event['patchSet']['number']}",event['change']['number'])       
+    tracer=set_tracer(f"patchset {event['patchSet']['number']}",event['change']['number'])       
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,event['type']))
     with tracer.start_span(comment,start_time=time,links=[trace.Link(ctx)]) as cr: #parent=code review span 
+        #Span namr can be just "Comment" instead of actual comment. 
         cr.set_attribute("Project",event['change']['project'])
         cr.set_attribute("Author",author)
         cr.set_attribute("Verified",f"{event['approvals'][0]['value']}")
@@ -236,7 +237,7 @@ def create_merged_or_abandoned_span(event):#
         name=event['abandoner']['name']
         username=event['abandoner']['username']
 
-    tracer=set_tracer(f"pathset {event['patchSet']['number']}",event['change']['number'])       
+    tracer=set_tracer(f"patchset {event['patchSet']['number']}",event['change']['number'])       
     set_generate_ids(custom_id_generator,trace_id,create_span_id(event,event_type))
     #Short span for change merged 
     with tracer.start_span(span_name,start_time=time,links=[trace.Link(parent)]) as cm: 
